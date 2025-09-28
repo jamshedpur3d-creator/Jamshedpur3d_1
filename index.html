@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jamshedpur 3D Solutions | 3D Printing & Prototyping</title>
+    <meta name="description" content="High-quality 3D printing, rapid prototyping, and 3D design services in Jamshedpur, India. We serve engineers, students, and businesses with fast, local service.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://placehold.co/32x32/3b82f6/ffffff?text=3D">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- 3D Viewer Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .hero-section {
+            background: linear-gradient(rgba(27, 39, 53, 0.8), rgba(27, 39, 53, 0.8)), url('https://images.unsplash.com/photo-1555708515-839e334860b0?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        #viewer-container canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        /* Scroll Animation Styles */
+        .reveal {
+            position: relative;
+            opacity: 0;
+            transform: translateY(80px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Subtle glow effect for cards */
+        .card-glow:hover {
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.2), 0 8px 10px -6px rgba(59, 130, 246, 0.2);
+        }
+        /* Spinner for Gemini API loading */
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #6366f1;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header & Navigation -->
+    <header id="header" class="bg-white/80 backdrop-blur-lg fixed top-0 left-0 right-0 z-50 shadow-md">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- MODIFIED: Text logo replaced with image logo -->
+            <a href="#" class="flex-shrink-0">
+                <img src="fulllogo_transparent.png" alt="Jamshedpur3D Logo" class="h-10 w-auto">
+            </a>
+            <nav class="hidden md:flex space-x-8 items-center">
+                <a href="#services" class="text-gray-600 hover:text-blue-600 font-medium transition duration-300">Services</a>
+                <a href="#new-launch" class="text-gray-600 hover:text-blue-600 font-medium transition duration-300">New Launches</a>
+                <a href="#portfolio" class="text-gray-600 hover:text-blue-600 font-medium transition duration-300">Portfolio</a>
+                <a href="#about" class="text-gray-600 hover:text-blue-600 font-medium transition duration-300">About</a>
+                <a href="#quote" class="nav-quote-btn bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105">Get a Quote</a>
+            </nav>
+            <button id="mobile-menu-button" class="md:hidden" aria-label="Open navigation menu">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#services" class="block py-2 text-gray-600 hover:text-blue-600">Services</a>
+            <a href="#new-launch" class="block py-2 text-gray-600 hover:text-blue-600">New Launches</a>
+            <a href="#portfolio" class="block py-2 text-gray-600 hover:text-blue-600">Portfolio</a>
+            <a href="#about" class="block py-2 text-gray-600 hover:text-blue-600">About</a>
+            <a href="#quote" class="nav-quote-btn block mt-2 w-full text-center bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg">Get a Quote</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section text-white pt-32 pb-20">
+            <div class="container mx-auto text-center px-6">
+                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 reveal">Bringing Your Ideas to Life in Jamshedpur</h1>
+                <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-3xl mx-auto reveal" style="transition-delay: 200ms;">High-quality, on-demand 3D printing, prototyping, and design services for engineers, students, and businesses in India's Steel City.</p>
+                <a href="#quote" class="nav-quote-btn inline-block bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl reveal" style="transition-delay: 400ms;">Get a Free Quote Now &rarr;</a>
+            </div>
+        </section>
+
+        <!-- Services Overview Section -->
+        <section id="services" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-4xl font-bold text-gray-800">What We Do</h2>
+                    <p class="text-gray-600 mt-2">From a simple idea to a functional part, we have you covered.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-2 card-glow reveal">
+                         <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 5.555a.5.5 0 01.9 0v2.9h2.9a.5.5 0 010 .9h-2.9v2.9a.5.5 0 01-.9 0v-2.9H6.65a.5.5 0 010-.9h2.9V5.555z" clip-rule="evenodd" /></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">On-Demand 3D Printing</h3>
+                        <p class="text-gray-600">Have a 3D model? We'll print it for you using our state-of-the-art printers. Fast turnarounds and a wide range of materials.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-2 card-glow reveal" style="transition-delay: 200ms;">
+                         <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.789 0l-2 4A1 1 0 008 8h4a1 1 0 00.894-1.447l-2-4zM10 18a1 1 0 01-1-1v-2a1 1 0 112 0v2a1 1 0 01-1 1zM2 10a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zM15 9a1 1 0 100 2h2a1 1 0 100-2h-2zM8 13a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" /></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Rapid Prototyping</h3>
+                        <p class="text-gray-600">Transform your concepts into tangible, functional prototypes. We help inventors and industries test, iterate, and perfect their designs.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-2 card-glow reveal" style="transition-delay: 400ms;">
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">3D Design & Modeling</h3>
+                        <p class="text-gray-600">Don't have a model? No problem. Our design experts can create a print-ready 3D model from your sketches, photos, or ideas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Newest Launches Section -->
+        <section id="new-launch" class="py-20 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-4xl font-bold text-gray-800">Our Newest Launches</h2>
+                    <p class="text-gray-600 mt-2">Check out the latest additions to our product lineup.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Item 1: Moon Lamp -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden group transition-all duration-300 transform hover:-translate-y-2 card-glow reveal">
+                        <img src="3D Printed Moon Lamp.jpg" alt="3D Printed Moon Lamp" class="w-full h-64 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold mb-3">Moon Lamp</h3>
+                            <p class="text-gray-600 mb-4">Bring the magic of the moon into your home with this stunning, topographically accurate 3D printed moon lamp.</p>
+                            <a href="#quote" data-product="moon-lamp" class="inquire-btn font-bold text-blue-600 hover:text-blue-800 transition-colors">Inquire Now &rarr;</a>
+                        </div>
+                    </div>
+                    <!-- Item 2: Eagle Lamp -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden group transition-all duration-300 transform hover:-translate-y-2 card-glow reveal" style="transition-delay: 200ms;">
+                        <img src="3D eagle lamp.jpg" class="w-full h-64 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold mb-3">Eagle Lamp</h3>
+                            <p class="text-gray-600 mb-4">A majestic eagle, intricately 3D printed to serve as a unique lamp or statement piece for your home or office.</p>
+                            <a href="#quote" data-product="eagle-lamp" class="inquire-btn font-bold text-blue-600 hover:text-blue-800 transition-colors">Inquire Now &rarr;</a>
+                        </div>
+                    </div>
+                    <!-- Item 3: Lithophane Photo -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden group transition-all duration-300 transform hover:-translate-y-2 card-glow reveal" style="transition-delay: 400ms;">
+                        <img src="3D printed lithophane.jpg" alt="3D Printed Lithophane Photo" class="w-full h-64 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold mb-3">Lithophane Photo</h3>
+                            <p class="text-gray-600 mb-4">Turn your favorite memories into a timeless keepsake. This 3D printed photo reveals its image when lit from behind.</p>
+                            <a href="#quote" data-product="lithophane" class="inquire-btn font-bold text-blue-600 hover:text-blue-800 transition-colors">Inquire Now &rarr;</a>
+                        </div>
+                    </div>
+                     <!-- Item 4: Name Key Chain -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden group transition-all duration-300 transform hover:-translate-y-2 card-glow reveal">
+                        <img src="Name Keyring.jpg" alt="3D Printed Name Key Chain" class="w-full h-64 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold mb-3">Name Key Chain</h3>
+                            <p class="text-gray-600 mb-4">Personalize your keys with a custom 3D printed name keychain. A durable and stylish accessory for daily use.</p>
+                            <a href="#quote" data-product="name-keychain" class="inquire-btn font-bold text-blue-600 hover:text-blue-800 transition-colors">Inquire Now &rarr;</a>
+                        </div>
+                    </div>
+                    <!-- Item 5: Name Stand -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden group transition-all duration-300 transform hover:-translate-y-2 card-glow reveal" style="transition-delay: 200ms;">
+                        <img src="Name stand.jpg" alt="3D Printed Name Stand" class="w-full h-64 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold mb-3">Name Stand</h3>
+                            <p class="text-gray-600 mb-4">Add a professional touch to your desk with a personalized 3D printed name stand. Perfect for your office or as a gift.</p>
+                            <a href="#quote" data-product="name-stand" class="inquire-btn font-bold text-blue-600 hover:text-blue-800 transition-colors">Inquire Now &rarr;</a>
+                        </div>
+                    </div>
+                    <!-- Item 6: NFC Keychain -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden group transition-all duration-300 transform hover:-translate-y-2 card-glow reveal" style="transition-delay: 400ms;">
+                        <img src="Number plate.jpg" alt="NFC Number Plate Keychain" class="w-full h-64 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold mb-3">NFC Number Plate Keychain</h3>
+                            <p class="text-gray-600 mb-4">A smart keychain with an embedded NFC chip. Store vehicle details, contact info, or any digital link for quick access.</p>
+                            <a href="#quote" data-product="nfc-keychain" class="inquire-btn font-bold text-blue-600 hover:text-blue-800 transition-colors">Inquire Now &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section id="portfolio" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-4xl font-bold text-gray-800">Our Latest Work</h2>
+                    <p class="text-gray-600 mt-2">A gallery of parts, prototypes, and projects we've brought to life.</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden group transition-transform duration-300 transform hover:scale-105 reveal">
+                        <img src="Gear.jpg" alt="A set of 3D printed mechanical gears" class="w-full h-64 object-cover">
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl">Mechanical Gear Set</h3>
+                            <p class="text-gray-600">Durable PETG print for functional testing.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden group transition-transform duration-300 transform hover:scale-105 reveal" style="transition-delay: 200ms;">
+                        <img src="Building.jpg" alt="A detailed 3D printed architectural model of a building" class="w-full h-64 object-cover">
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl">Architectural Model</h3>
+                            <p class="text-gray-600">High-detail PLA model for a local firm.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden group transition-transform duration-300 transform hover:scale-105 reveal" style="transition-delay: 400ms;">
+                        <img src="Jigs.jpg" alt="A custom 3D printed assembly jig" class="w-full h-64 object-cover">
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl">Custom Assembly Jig</h3>
+                            <p class="text-gray-600">ABS jig for a local manufacturing unit.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden group transition-transform duration-300 transform hover:scale-105 reveal">
+                        <img src="Ironman.jpg" alt="An ultra-high resolution resin 3D printed miniature figurine" class="w-full h-64 object-cover">
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl">Detailed Figurine</h3>
+                            <p class="text-gray-600">Ultra-high resolution 3D print for a collectors.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden group transition-transform duration-300 transform hover:scale-105 reveal" style="transition-delay: 200ms;">
+                        <img src="Electronic enclosure.jpg" alt="A black 3D printed electronics enclosure" class="w-full h-64 object-cover">
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl">Electronics Enclosure</h3>
+                            <p class="text-gray-600">Custom case for a student's final year project.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden group transition-transform duration-300 transform hover:scale-105 reveal" style="transition-delay: 400ms;">
+                        <img src="Lithopane lamp.jpg" alt="A personalized 3D printed lithophane lamp" class="w-full h-64 object-cover">
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl">Lithophane Lamp</h3>
+                            <p class="text-gray-600">Personalized photo lamp printed in PLA.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Materials Section -->
+        <section id="materials" class="py-20 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="text-4xl font-bold text-gray-800">Materials & Technology</h2>
+                    <p class="text-gray-600 mt-2">The right material for every application.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 reveal">
+                        <h3 class="text-xl font-bold text-blue-600">PLA</h3>
+                        <p class="mt-2 text-gray-600">Eco-friendly and versatile. Perfect for detailed visual models, prototypes, and hobbyist prints.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 reveal" style="transition-delay: 200ms;">
+                        <h3 class="text-xl font-bold text-blue-600">PLA Pro</h3>
+                        <p class="mt-2 text-gray-600">Enhanced strength and durability over standard PLA, suitable for functional parts that require higher resistance.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 reveal" style="transition-delay: 400ms;">
+                        <h3 class="text-xl font-bold text-blue-600">PLA Pro +</h3>
+                        <p class="mt-2 text-gray-600">Our strongest material. Offers superior impact resistance and toughness, ideal for demanding applications.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about" class="py-20 bg-white">
+            <div class="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2 reveal">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d117747.5303681342!2d86.12681533519894!3d22.78410292723631!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39f5e31989f0e2b5%3A0xee3352c7b5f43170!2sJamshedpur%2C%20Jharkhand%2C%20India!5e0!3m2!1sen!2sus!4v1727524684988!5m2!1sen!2sus" class="w-full h-96 rounded-xl shadow-2xl border-0" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+                <div class="md:w-1/2 reveal" style="transition-delay: 200ms;">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Jamshedpur's Local 3D Printing Hub</h2>
+                    <p class="text-gray-600 mb-4">Founded by a passionate engineer in the heart of India's Steel City, Jamshedpur 3D Solutions was born from a love for technology and creation. We saw a need for an accessible, local, and expert 3D printing service that could support the incredible innovation happening right here in our community.</p>
+                    <p class="text-gray-600">Our mission is simple: to provide the tools and expertise to help you build the future, one layer at a time.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quote Section -->
+        <section id="quote" class="py-20 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="bg-gradient-to-br from-blue-600 to-blue-800 text-white p-8 md:p-12 rounded-2xl shadow-2xl reveal">
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <h2 class="text-4xl font-bold mb-4">Get Your Free Quote</h2>
+                            <p class="mb-6 opacity-90">For custom projects, upload your file below. For our newest products, click "Inquire Now" on the item you like!</p>
+                             <ul class="space-y-4">
+                                 <li class="flex items-start"><span class="bg-orange-500 rounded-full text-white text-sm font-bold w-6 h-6 flex items-center justify-center mr-3 mt-1">1</span><span>Fill out the form with your project details.</span></li>
+                                 <li class="flex items-start"><span class="bg-orange-500 rounded-full text-white text-sm font-bold w-6 h-6 flex items-center justify-center mr-3 mt-1">2</span><span>Upload your 3D model file (for custom prints).</span></li>
+                                 <li class="flex items-start"><span class="bg-orange-500 rounded-full text-white text-sm font-bold w-6 h-6 flex items-center justify-center mr-3 mt-1">3</span><span>Receive your custom quote via email.</span></li>
+                            </ul>
+                        </div>
+                        <div class="bg-white p-8 rounded-xl shadow-lg">
+                            <form id="quote-form" action="https://formsubmit.co/jamshedpur3d@gmail.com" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="_subject" value="New Quote Request from Jamshedpur3D Website!">
+                                <input type="hidden" name="_template" value="table">
+                                <input type="hidden" name="_captcha" value="false">
+                                <input type="hidden" name="_next" value="https://your-website-url.com/thank-you.html">
+                                <input type="hidden" name="_autoresponse" value="Thank you for your submission! We've received your quote request and will get back to you within 24 business hours. - Jamshedpur 3D Solutions">
+                                <div class="mb-4">
+                                    <label for="name" class="block text-gray-700 font-medium mb-1">Your Name</label>
+                                    <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-black transition-shadow duration-300" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="email" class="block text-gray-700 font-medium mb-1">Your Email</label>
+                                    <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-black transition-shadow duration-300" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="phone" class="block text-gray-700 font-medium mb-1">Your Phone Number</label>
+                                    <input type="tel" id="phone" name="phone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-black transition-shadow duration-300" pattern="[0-9]{10}" title="Please enter a 10-digit phone number" required>
+                                </div>
+                                <div id="product-options-container" class="space-y-4 mb-4"></div>
+                                <div class="mb-4">
+                                    <label for="material" class="block text-gray-700 font-medium mb-1">Material</label>
+                                    <select id="material" name="material" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-black transition-shadow duration-300">
+                                        <option>PLA</option>
+                                        <option>PLA Pro</option>
+                                        <option>PLA Pro +</option>
+                                        <option>Not Sure</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="description" class="block text-gray-700 font-medium mb-1">Project Description / Inquiry</label>
+                                    <textarea id="description" name="description" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-black transition-shadow duration-300" placeholder="For custom prints, provide instructions."></textarea>
+                                    <div class="mt-2 text-right">
+                                        <button type="button" id="gemini-recommend-btn" class="text-sm bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center ml-auto disabled:opacity-50" disabled>
+                                            <span id="gemini-btn-text">✨ Get AI Recommendation</span>
+                                            <div id="gemini-spinner" class="spinner ml-2 hidden"></div>
+                                        </button>
+                                    </div>
+                                    <div id="gemini-result" class="mt-3 text-sm text-gray-700 bg-gray-100 p-3 rounded-lg hidden"></div>
+                                </div>
+                                <div id="custom-model-upload" class="mb-4">
+                                    <label class="block text-gray-700 font-medium mb-1">Upload 3D Model(s) (.stl)</label>
+                                    <div id="file-inputs-container" class="space-y-3"></div>
+                                    <button type="button" id="add-file-btn" class="mt-2 flex items-center space-x-2 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                                        <span>Add another file</span>
+                                    </button>
+                                </div>
+                                <div id="infill-slider-container" class="mb-4 hidden">
+                                    <label for="infill" class="block text-gray-700 font-medium mb-1">Infill: <span id="infill-value" class="font-bold text-blue-600">20%</span></label>
+                                    <input type="range" id="infill" name="infill_percentage_visual" min="10" max="100" value="20" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                    <input type="hidden" name="infill_percentage" id="infill-hidden-input" value="20%">
+                                </div>
+                                <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105">Submit Quote Request</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div id="viewer-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-[100]">
+            <div class="bg-white rounded-lg shadow-xl p-4 w-11/12 h-5/6 max-w-4xl relative flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-xl font-bold text-gray-800">3D Model Preview</h3>
+                    <button id="close-viewer" class="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
+                </div>
+                <p class="text-center text-sm text-gray-500 mb-2">Click and drag to rotate. Scroll to zoom.</p>
+                <div id="viewer-container" class="flex-grow w-full h-full bg-gray-200 rounded-md border"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/917013999147" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-all transform hover:scale-110 z-50">
+        <svg fill="currentColor" class="w-8 h-8" viewBox="0 0 30 30">
+            <path d="M 15.01 2 C 8.423 2 3.018 7.404 3.018 13.99 C 3.018 16.202 3.68 18.282 4.822 20.01 L 3.203 25.412 L 8.814 23.832 C 10.463 24.811 12.65 25.485 15.01 25.485 C 21.596 25.485 26.99 20.08 27 13.495 C 27 6.909 21.596 2 15.01 2 Z M 15.01 4 C 20.443 4 24.99 8.446 25 13.88 C 25.01 19.32 20.553 23.493 15.01 23.493 C 12.87 23.493 10.875 22.84 9.244 21.723 L 8.68 21.375 L 4.822 22.797 L 6.279 19.033 L 5.898 18.443 C 4.678 16.712 4.018 14.653 4.018 12.477 C 4.018 8.016 8.525 4 15.01 4 Z M 10.881 8.932 C 10.655 8.932 10.428 8.932 10.203 8.932 C 9.92 8.932 9.638 8.952 9.428 9.352 C 9.218 9.752 8.428 10.512 8.428 11.972 C 8.428 13.432 9.458 14.852 9.618 15.042 C 9.778 15.232 11.859 18.522 15.088 19.962 C 18.318 21.402 18.318 20.832 18.738 20.782 C 19.158 20.732 20.248 20.152 20.478 19.462 C 20.708 18.772 20.708 18.172 20.648 18.042 C 20.588 17.912 20.408 17.842 20.128 17.692 C 19.848 17.542 18.318 16.792 18.068 16.682 C 17.818 16.572 17.638 16.532 17.458 16.892 C 17.278 17.252 16.678 17.842 16.508 18.042 C 16.338 18.242 16.168 18.252 15.918 18.102 C 15.668 17.952 14.478 17.512 13.048 16.202 C 11.908 15.152 11.198 13.892 11.018 13.592 C 10.838 13.292 10.958 13.172 11.138 13.002 C 11.298 12.852 11.488 12.632 11.648 12.452 C 11.808 12.272 11.868 12.162 12.008 11.912 C 12.148 11.662 12.088 11.452 11.998 11.302 C 11.908 11.152 11.228 9.492 10.881 8.932 Z"></path>
+        </svg>
+    </a>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white">
+        <div class="container mx-auto px-6 py-10">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <!-- MODIFIED: Text logo replaced with image logo -->
+                    <img src="fulllogo_transparent.png" alt="Jamshedpur3D Logo" class="h-10 w-auto mb-4">
+                    <p class="text-gray-400">Your local partner for digital fabrication and innovation in Jamshedpur.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul>
+                        <li class="mb-2"><a href="#services" class="hover:text-blue-500">Services</a></li>
+                        <li class="mb-2"><a href="#new-launch" class="hover:text-blue-500">New Launches</a></li>
+                        <li class="mb-2"><a href="#portfolio" class="hover:text-blue-500">Portfolio</a></li>
+                        <li class="mb-2"><a href="#about" class="hover:text-blue-500">About Us</a></li>
+                        <li class="mb-2"><a href="#quote" class="hover:text-blue-500">Get a Quote</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact Us</h3>
+                    <p class="text-gray-400 mb-2">📍 Jamshedpur, Jharkhand, India</p>
+                    <p class="text-gray-400 mb-2">📧 <a href="mailto:jamshedpur3d@gmail.com" class="hover:text-blue-500">jamshedpur3d@gmail.com</a></p>
+                    <p class="text-gray-400 mb-2">📞 <a href="tel:7013999147" class="hover:text-blue-500">7013999147</a></p>
+                    <p class="text-gray-400">💬 <a href="https://wa.me/917013999147" target="_blank" rel="noopener noreferrer" class="hover:text-blue-500">WhatsApp</a></p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-500 text-sm">
+                <p>&copy; <span id="year"></span> Jamshedpur 3D Solutions. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+            });
+            document.getElementById('year').textContent = new Date().getFullYear();
+
+            const fileInputsContainer = document.getElementById('file-inputs-container');
+            const addFileBtn = document.getElementById('add-file-btn');
+            const infillContainer = document.getElementById('infill-slider-container');
+            const infillSlider = document.getElementById('infill');
+            const infillValueSpan = document.getElementById('infill-value');
+            const infillHiddenInput = document.getElementById('infill-hidden-input');
+            const viewerModal = document.getElementById('viewer-modal');
+            const viewerContainer = document.getElementById('viewer-container');
+            const closeViewerBtn = document.getElementById('close-viewer');
+            const inquireBtns = document.querySelectorAll('.inquire-btn');
+            const productOptionsContainer = document.getElementById('product-options-container');
+            const descriptionInput = document.getElementById('description');
+            const customModelUploadSection = document.getElementById('custom-model-upload');
+            const navQuoteBtns = document.querySelectorAll('.nav-quote-btn');
+            
+            const geminiBtn = document.getElementById('gemini-recommend-btn');
+            const geminiBtnText = document.getElementById('gemini-btn-text');
+            const geminiSpinner = document.getElementById('gemini-spinner');
+            const geminiResultDiv = document.getElementById('gemini-result');
+            const materialSelect = document.getElementById('material');
+
+            let scene, camera, renderer, controls, mesh, animationFrameId;
+
+            const createSizeSelector = () => `<div class="product-option"><label for="product_size" class="block text-gray-700 font-medium mb-1">Size</label><select id="product_size" name="product_size" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"><option>Small</option><option>Medium</option><option>Large</option></select></div>`;
+            const createTextInput = (l, n, p) => `<div class="product-option"><label for="${n}" class="block text-gray-700 font-medium mb-1">${l}</label><input type="text" id="${n}" name="${n}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-black" placeholder="${p}" required></div>`;
+            const createPhotoUpload = () => `<div class="product-option"><label for="photo_upload" class="block text-gray-700 font-medium mb-1">Upload Photo (.jpg, .jpeg)</label><input type="file" id="photo_upload" name="photo_attachment" class="w-full text-gray-700 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" accept=".jpg, .jpeg" required></div>`;
+
+            inquireBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const product = btn.dataset.product;
+                    productOptionsContainer.innerHTML = '';
+                    let optionsHTML = '';
+                    customModelUploadSection.classList.add('hidden');
+                    infillContainer.classList.add('hidden');
+                    switch (product) {
+                        case 'moon-lamp': descriptionInput.value = 'Inquiry for: Moon Lamp'; optionsHTML += createSizeSelector(); break;
+                        case 'eagle-lamp': descriptionInput.value = 'Inquiry for: Eagle Lamp'; break;
+                        case 'lithophane': descriptionInput.value = 'Inquiry for: Lithophane Photo'; optionsHTML += createSizeSelector(); optionsHTML += createPhotoUpload(); break;
+                        case 'name-keychain': descriptionInput.value = 'Inquiry for: Name Key Chain'; optionsHTML += createTextInput('Name to be Printed', 'name_to_print', 'Enter name here'); break;
+                        case 'name-stand': descriptionInput.value = 'Inquiry for: Name Stand'; optionsHTML += createTextInput('Name to be Printed', 'name_to_print', 'Enter name here'); optionsHTML += createSizeSelector(); break;
+                        case 'nfc-keychain': descriptionInput.value = 'Inquiry for: NFC Number Plate Keychain'; optionsHTML += createTextInput('Enter Number', 'vehicle_number', 'e.g., JH05 AB 1234'); break;
+                    }
+                    productOptionsContainer.innerHTML = optionsHTML;
+                    document.getElementById('quote').scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            navQuoteBtns.forEach(btn => btn.addEventListener('click', () => {
+                productOptionsContainer.innerHTML = '';
+                descriptionInput.value = '';
+                customModelUploadSection.classList.remove('hidden');
+            }));
+
+            function addFileInputRow() {
+                const row = document.createElement('div');
+                row.className = 'file-input-row bg-gray-50 p-2 rounded-lg flex items-center space-x-2';
+                row.innerHTML = `<div class="flex-grow"><input type="file" name="attachments[]" class="file-input w-full text-gray-700 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-blue-700 hover:file:bg-blue-100" accept=".stl"><span class="file-name-span text-xs text-gray-500 mt-1 block pl-1"></span></div><button type="button" class="preview-btn bg-blue-500 text-white font-bold py-2 px-3 rounded-lg text-sm shadow-md hover:bg-blue-600 transition duration-300 opacity-50 cursor-not-allowed" disabled>Preview</button><button type="button" class="remove-btn text-gray-500 hover:text-red-600 font-bold text-xl p-1 leading-none flex-shrink-0">&times;</button>`;
+                fileInputsContainer.appendChild(row);
+                updateInfillVisibility();
+            }
+
+            function updateInfillVisibility() {
+                const anyFileSelected = [...document.querySelectorAll('.file-input')].some(input => input.files.length > 0);
+                infillContainer.classList.toggle('hidden', !anyFileSelected);
+            }
+
+            fileInputsContainer.addEventListener('change', e => {
+                if (e.target.classList.contains('file-input')) {
+                    const row = e.target.closest('.file-input-row');
+                    const previewBtn = row.querySelector('.preview-btn');
+                    const fileNameSpan = row.querySelector('.file-name-span');
+                    const file = e.target.files[0];
+                    if (file && file.name.toLowerCase().endsWith('.stl')) {
+                        fileNameSpan.textContent = file.name;
+                        previewBtn.disabled = false;
+                        previewBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    } else {
+                        fileNameSpan.textContent = file ? 'Please select a valid .stl file.' : '';
+                        previewBtn.disabled = true;
+                        previewBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                        if(file) e.target.value = '';
+                    }
+                    updateInfillVisibility();
+                }
+            });
+
+            fileInputsContainer.addEventListener('click', e => {
+                if (e.target.classList.contains('preview-btn')) {
+                    const file = e.target.closest('.file-input-row').querySelector('.file-input').files[0];
+                    if (file) {
+                        viewerModal.classList.remove('hidden');
+                        viewerModal.classList.add('flex');
+                        initViewer(file);
+                    }
+                }
+                if (e.target.classList.contains('remove-btn')) {
+                    const row = e.target.closest('.file-input-row');
+                    if (fileInputsContainer.children.length > 1) row.remove();
+                    else {
+                        const input = row.querySelector('.file-input');
+                        input.value = '';
+                        row.querySelector('.file-name-span').textContent = '';
+                        const previewBtn = row.querySelector('.preview-btn');
+                        previewBtn.disabled = true;
+                        previewBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    }
+                    updateInfillVisibility();
+                }
+            });
+
+            addFileBtn.addEventListener('click', addFileInputRow);
+            
+            infillSlider.addEventListener('input', e => {
+                const value = `${e.target.value}%`;
+                infillValueSpan.textContent = value;
+                infillHiddenInput.value = value;
+            });
+
+            descriptionInput.addEventListener('input', () => {
+                geminiBtn.disabled = descriptionInput.value.trim().length < 10;
+            });
+
+            geminiBtn.addEventListener('click', async () => {
+                const userQuery = descriptionInput.value;
+                if (!userQuery) return;
+
+                geminiBtn.disabled = true;
+                geminiSpinner.classList.remove('hidden');
+                geminiBtnText.textContent = 'Analyzing...';
+                geminiResultDiv.classList.add('hidden');
+
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                const systemPrompt = "You are a 3D printing expert for a company that only offers PLA, PLA Pro, and PLA Pro+ materials. Analyze the following project description. Based on the user's need for durability, detail, or function, recommend the best material and a suitable infill percentage (a number between 10 and 100). Respond ONLY with a valid JSON object in the format: {\"material\": \"MATERIAL_NAME\", \"infill\": INFILL_NUMBER}. The material MUST be one of: 'PLA', 'PLA Pro', or 'PLA Pro +'. The infill must be a number.";
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    generationConfig: { responseMimeType: "application/json" }
+                };
+
+                try {
+                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+                    const result = await response.json();
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    const data = JSON.parse(text);
+                    if (data.material && data.infill) {
+                        materialSelect.value = data.material;
+                        infillSlider.value = data.infill;
+                        infillValueSpan.textContent = `${data.infill}%`;
+                        infillHiddenInput.value = `${data.infill}%`;
+                        infillContainer.classList.remove('hidden');
+                        geminiResultDiv.innerHTML = `<strong>Recommendation:</strong> Based on your description, we suggest using <strong>${data.material}</strong> with <strong>${data.infill}% infill</strong>. We've updated the form for you.`;
+                        geminiResultDiv.classList.remove('hidden');
+                    } else throw new Error("Invalid response format from AI.");
+                } catch (error) {
+                    console.error("Gemini API Error:", error);
+                    geminiResultDiv.innerHTML = 'Sorry, we couldn\'t get a recommendation right now. Please select your options manually.';
+                    geminiResultDiv.classList.remove('hidden');
+                } finally {
+                    geminiBtn.disabled = false;
+                    geminiSpinner.classList.add('hidden');
+                    geminiBtnText.textContent = '✨ Get AI Recommendation';
+                }
+            });
+
+            function initViewer(file) {
+                scene = new THREE.Scene();
+                scene.background = new THREE.Color(0xeeeeee);
+                const { width, height } = viewerContainer.getBoundingClientRect();
+                camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+                renderer = new THREE.WebGLRenderer({ antialias: true });
+                renderer.setSize(width, height);
+                viewerContainer.innerHTML = '';
+                viewerContainer.appendChild(renderer.domElement);
+                controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+                const dirLight1 = new THREE.DirectionalLight(0xffffff, 1);
+                dirLight1.position.set(50, 50, 50);
+                scene.add(dirLight1);
+                const loader = new THREE.STLLoader();
+                const reader = new FileReader();
+                reader.onload = e => {
+                    try {
+                        const geometry = loader.parse(e.target.result);
+                        geometry.center();
+                        const material = new THREE.MeshPhongMaterial({ color: 0x3b82f6, specular: 0x111111, shininess: 30 });
+                        mesh = new THREE.Mesh(geometry, material);
+                        const box = new THREE.Box3().setFromObject(mesh);
+                        const size = box.getSize(new THREE.Vector3());
+                        const maxDim = Math.max(size.x, size.y, size.z);
+                        camera.position.z = maxDim * 1.5;
+                        scene.add(mesh);
+                        animate();
+                    } catch (error) {
+                        alert("Error: Could not display the STL file.");
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            }
+
+            function animate() {
+                animationFrameId = requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+
+            function cleanupViewer() {
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                if (renderer) renderer.dispose();
+                viewerContainer.innerHTML = '';
+                scene = camera = renderer = controls = mesh = animationFrameId = null;
+            }
+
+            closeViewerBtn.addEventListener('click', () => {
+                viewerModal.classList.add('hidden');
+                viewerModal.classList.remove('flex');
+                cleanupViewer();
+            });
+
+            window.addEventListener('resize', () => {
+                if (renderer && camera) {
+                    const { width, height } = viewerContainer.getBoundingClientRect();
+                    if (width > 0 && height > 0) {
+                        camera.aspect = width / height;
+                        camera.updateProjectionMatrix();
+                        renderer.setSize(width, height);
+                    }
+                }
+            });
+
+            function reveal() {
+                const reveals = document.querySelectorAll('.reveal');
+                reveals.forEach(el => {
+                    const windowHeight = window.innerHeight;
+                    const elementTop = el.getBoundingClientRect().top;
+                    const elementVisible = 100;
+                    if (elementTop < windowHeight - elementVisible) {
+                        el.classList.add('active');
+                    }
+                });
+            }
+            window.addEventListener('scroll', reveal);
+            
+            addFileInputRow();
+            reveal();
+        });
+    </script>
+</body>
+</html>
+
+
